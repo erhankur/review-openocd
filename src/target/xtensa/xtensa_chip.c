@@ -29,7 +29,7 @@
 #include "xtensa_chip.h"
 
 int xtensa_chip_init_arch_info(struct target *target, void *arch_info,
-		struct xtensa_debug_module_config *dm_cfg)
+	struct xtensa_debug_module_config *dm_cfg)
 {
 	struct xtensa_chip_common *xtensa_chip = (struct xtensa_chip_common *)arch_info;
 	if (!dm_cfg->queue_tdi_idle && dm_cfg->tap) {
@@ -92,8 +92,9 @@ void xtensa_chip_queue_tdi_idle(struct target *target)
 	} else if (xtensa_chip->flash_bootstrap == FBS_TMSHIGH) {
 		/*Make sure tdi is 1 at the exit of queue execution */
 		value = 1;
-	} else
+	} else {
 		return;
+	}
 #endif
 
 	/* Scan out 1 bit, do not move from IRPAUSE after we're done. */
@@ -153,7 +154,6 @@ static int xtensa_chip_target_create(struct target *target, Jim_Interp *interp)
 	target->debug_reason = DBG_REASON_NOTHALTED;
 	return ERROR_OK;
 }
-
 
 void xtensa_chip_target_deinit(struct target *target)
 {

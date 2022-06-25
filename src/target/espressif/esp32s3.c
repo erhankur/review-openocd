@@ -312,7 +312,6 @@ static int esp32s3_virt2phys(struct target *target,
 	return ERROR_FAIL;
 }
 
-
 static int esp32s3_target_init(struct command_context *cmd_ctx, struct target *target)
 {
 	return esp_xtensa_target_init(cmd_ctx, target);
