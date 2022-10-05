@@ -32,7 +32,9 @@
 #define PTR_WIDTH 4
 
 static const struct rtos_register_stacking *cortexm_select_stackinfo(struct target *target);
-static const struct rtos_register_stacking *riscv_select_stackinfo(struct target *target);
+static const struct rtos_register_stacking *esp32_select_stackinfo(struct target *target);
+static const struct rtos_register_stacking *esp32s2_select_stackinfo(struct target *target);
+static const struct rtos_register_stacking *esp32s3_select_stackinfo(struct target *target);
 
 struct nuttx_params {
 	const char *target_name;
@@ -95,9 +97,18 @@ static const struct nuttx_params nuttx_params_list[] = {
 		.select_stackinfo = cortexm_select_stackinfo,
 	},
 	{
-		.target_name = "esp32c3",
-		.select_stackinfo = riscv_select_stackinfo,
+		.target_name = "esp32",
+		.select_stackinfo = esp32_select_stackinfo,
 	},
+	{
+		.target_name = "esp32s2",
+		.select_stackinfo = esp32s2_select_stackinfo,
+	},
+	{
+		.target_name = "esp32s3",
+		.select_stackinfo = esp32s3_select_stackinfo,
+	},
+
 };
 
 static bool cortexm_hasfpu(struct target *target)
@@ -120,6 +131,21 @@ static bool cortexm_hasfpu(struct target *target)
 static const struct rtos_register_stacking *cortexm_select_stackinfo(struct target *target)
 {
 	return cortexm_hasfpu(target) ? &nuttx_stacking_cortex_m_fpu : &nuttx_stacking_cortex_m;
+}
+
+static const struct rtos_register_stacking *esp32_select_stackinfo(struct target *target)
+{
+	return &nuttx_esp32_stacking;
+}
+
+static const struct rtos_register_stacking *esp32s2_select_stackinfo(struct target *target)
+{
+	return &nuttx_esp32s2_stacking;
+}
+
+static const struct rtos_register_stacking *esp32s3_select_stackinfo(struct target *target)
+{
+	return &nuttx_esp32s3_stacking;
 }
 
 static const struct rtos_register_stacking *riscv_select_stackinfo(struct target *target)
@@ -159,6 +185,13 @@ static int nuttx_create(struct target *target)
 	target->rtos->rtos_specific_params = (void *)param;
 
 	return JIM_OK;
+}
+
+static int nuttx_smp_init(struct target *target)
+{
+	/* Return OK for now so that the initialisation sequence doesn't stop.
+	 * SMP case will be implemented later. */
+	return ERROR_OK;
 }
 
 static int nuttx_update_threads(struct rtos *rtos)
@@ -393,6 +426,7 @@ struct rtos_type nuttx_rtos = {
 	.name = "NuttX",
 	.detect_rtos = nuttx_detect_rtos,
 	.create = nuttx_create,
+	.smp_init = nuttx_smp_init,
 	.update_threads = nuttx_update_threads,
 	.get_thread_reg_list = nuttx_get_thread_reg_list,
 	.get_symbol_list_to_lookup = nuttx_get_symbol_list_to_lookup,
