@@ -108,7 +108,6 @@ static const struct nuttx_params nuttx_params_list[] = {
 		.target_name = "esp32s3",
 		.select_stackinfo = esp32s3_select_stackinfo,
 	},
-
 };
 
 static bool cortexm_hasfpu(struct target *target)
@@ -146,11 +145,6 @@ static const struct rtos_register_stacking *esp32s2_select_stackinfo(struct targ
 static const struct rtos_register_stacking *esp32s3_select_stackinfo(struct target *target)
 {
 	return &nuttx_esp32s3_stacking;
-}
-
-static const struct rtos_register_stacking *riscv_select_stackinfo(struct target *target)
-{
-	return &nuttx_riscv_stacking;
 }
 
 static bool nuttx_detect_rtos(struct target *target)
