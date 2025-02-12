@@ -127,6 +127,7 @@ jobs:
           tag: ${{ env.RELEASE_NAME }}
           commit: ${{ github.sha }}
           draft: false
+          allowUpdates: true
           artifacts: ${{ env.ARTIFACT_PATH }}
           prerelease: ${{ env.IS_PRE_RELEASE }}
           token: ${{ secrets.GITHUB_TOKEN }}
